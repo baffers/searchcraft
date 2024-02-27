@@ -145,6 +145,7 @@ class SearchCraft::Builder
   end
 
   def create_view!
+    warn "Creating view/sequence/indexes for #{view_name}..." if SearchCraft.debug?
     create_sequence!
     sql_execute(view_sql)
     create_indexes!
@@ -152,10 +153,12 @@ class SearchCraft::Builder
 
   # Finds and drops all indexes and sequences on view, and then drops view
   def drop_view!
+    puts "Dropping view/sequence for #{view_name}..." if SearchCraft.debug?
     sql_execute("DROP MATERIALIZED VIEW IF EXISTS #{view_name} CASCADE;")
 
     sql_execute("DROP SEQUENCE IF EXISTS #{view_id_sequence_name};")
 
+    warn "Updating ViewHashStore for #{self.class.name}" if SearchCraft.debug?
     SearchCraft::ViewHashStore.reset!(builder: self)
   end
 

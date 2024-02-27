@@ -38,6 +38,7 @@ module SearchCraft::Model
 
   module ClassMethods
     def refresh!
+      puts "Refreshing materialized view #{table_name}..." if SearchCraft.debug?
       Scenic.database.refresh_materialized_view(table_name, concurrently: @refresh_concurrently, cascade: false)
     end
 
