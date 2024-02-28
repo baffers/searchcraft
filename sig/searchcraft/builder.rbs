@@ -12,10 +12,13 @@ module SearchCraft
     def self.find_subclasses_via_rails_eager_load_paths: (?known_subclass_names: Array[String]) -> Array[String]
 
     def self.rebuild_all!: () -> void
-
     def self.rebuild_any_if_changed!: () -> void
 
     def self.recreate_indexes!: () -> void
+
+    def self.with_no_data: () -> void
+    def self.with_data: () -> void
+    def self.with_no_data?: () -> bool
 
     def create_view!: () -> void
 

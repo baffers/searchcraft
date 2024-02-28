@@ -24,6 +24,18 @@ class SearchCraft::Builder
   end
 
   class << self
+    def with_no_data
+      @with_no_data = true
+    end
+
+    def with_data
+      @with_no_data = false
+    end
+
+    def with_no_data?
+      @with_no_data
+    end
+
     # Iterate through subclasses, and invoke recreate_view_if_changed!
     def rebuild_any_if_changed!
       SearchCraft::ViewHashStore.setup_table_if_needed!
@@ -99,7 +111,7 @@ class SearchCraft::Builder
     # remove trailing ; from view_sql
     inner_sql = view_select_sql.gsub(/;\s*$/, "")
     # TODO: allow a builder to be configured to be created with `WITH NO DATA`
-    with_data = "WITH DATA"
+    with_data = "WITH NO DATA" if self.class.with_no_data?
     "CREATE MATERIALIZED VIEW #{view_name} AS (#{inner_sql}) #{with_data};"
   end
 
