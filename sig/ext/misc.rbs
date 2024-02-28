@@ -26,6 +26,7 @@ module Scenic
   module Adapters
     class Postgres
       def refresh_materialized_view: (String, ?concurrently: bool, ?cascade: bool) -> nil
+      def populated?: (String) -> bool
     end
   end
 

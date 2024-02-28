@@ -98,7 +98,9 @@ class SearchCraft::Builder
   def view_sql
     # remove trailing ; from view_sql
     inner_sql = view_select_sql.gsub(/;\s*$/, "")
-    "CREATE MATERIALIZED VIEW #{view_name} AS (#{inner_sql}) WITH DATA;"
+    # TODO: allow a builder to be configured to be created with `WITH NO DATA`
+    with_data = "WITH DATA"
+    "CREATE MATERIALIZED VIEW #{view_name} AS (#{inner_sql}) #{with_data};"
   end
 
   # After materialized view created, do you need indexes on its columns?

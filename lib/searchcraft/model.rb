@@ -42,6 +42,16 @@ module SearchCraft::Model
       Scenic.database.refresh_materialized_view(table_name, concurrently: @refresh_concurrently, cascade: false)
     end
 
+    def populated?
+      # NOTE: https://github.com/scenic-views/scenic/pull/406 will do this clean up for us
+      schemaless_table_name = table_name.split(".").last.presence || table_name
+      if Scenic.database.respond_to?(:populated?)
+        Scenic.database.populated?(schemaless_table_name)
+      else
+        raise "Upgrade Scenic beyond v1.7.0 to get populated? method"
+      end
+    end
+
     def refresh_concurrently=(value)
       @refresh_concurrently = value
     end
