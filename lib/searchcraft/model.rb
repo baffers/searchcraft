@@ -66,6 +66,30 @@ module SearchCraft::Model
     def refresh_concurrently=(value)
       @refresh_concurrently = value
     end
+
+    # Checks the database server to see if the materialized view is currently being refreshed
+    def currently_refreshing?
+      # quoted_table_name is table_name, but with double quotes around each chunk
+      # e.g. "schema"."table" or "table"
+      quoted_table_name = Scenic.database.quote_table_name(table_name)
+      dbname = ActiveRecord::Base.connection_db_config.database
+      sql = <<~SQL
+        SELECT EXISTS (
+          SELECT 1
+          FROM pg_stat_activity
+          WHERE datname = '#{dbname}'
+            AND query LIKE '%REFRESH MATERIALIZED VIEW #{quoted_table_name}%'
+            AND pid <> pg_backend_pid()
+        ) AS is_refresh_running;
+      SQL
+
+      warn "Checking if #{table_name} is currently being refreshed..." if SearchCraft.debug?
+      if (result = ActiveRecord::Base.connection.execute(sql))
+        result.first["is_refresh_running"]
+      else
+        false
+      end
+    end
   end
 
   def read_only?

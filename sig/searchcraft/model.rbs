@@ -5,6 +5,8 @@ module SearchCraft
 
       def refresh_all!: () -> void
 
+      def currently_refreshing?: () -> bool
+
       def table_name: () -> String
 
       def table_name=: (String) -> void

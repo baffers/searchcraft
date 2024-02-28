@@ -10,6 +10,11 @@ module ActiveRecord
 
   class Base
     def self.configurations: () -> ActiveRecord::DatabaseConfigurations
+    def self.connection_db_config: () -> ActiveRecord::DatabaseConfig
+  end
+
+  class DatabaseConfig
+    def database: () -> String
   end
 end
 
@@ -27,6 +32,7 @@ module Scenic
     class Postgres
       def refresh_materialized_view: (String, ?concurrently: bool, ?cascade: bool) -> nil
       def populated?: (String) -> bool
+      def quote_table_name: (String) -> String
     end
   end
 
