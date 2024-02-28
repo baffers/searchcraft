@@ -12,6 +12,8 @@ module SearchCraft
       def name: () -> String
 
       def refresh!: () -> void
+
+      def populated?: () -> bool
     end
 
     extend ClassMethods

@@ -28,6 +28,14 @@ module SearchCraft::Model
     end
   end
 
+  def self.refresh_any_unpopulated!
+    included_classes.each do |klass|
+      unless klass.respond_to?(:populated?) && klass.populated?
+        klass.refresh!
+      end
+    end
+  end
+
   def self.included_classes
     @included_classes | if SearchCraft.config.explicit_model_class_names
       SearchCraft.config.explicit_model_class_names.map(&:constantize)
@@ -38,8 +46,10 @@ module SearchCraft::Model
 
   module ClassMethods
     def refresh!
+      refresh_concurrently = @refresh_concurrently && populated?
       puts "Refreshing materialized view #{table_name}..." if SearchCraft.debug?
-      Scenic.database.refresh_materialized_view(table_name, concurrently: @refresh_concurrently, cascade: false)
+
+      Scenic.database.refresh_materialized_view(table_name, concurrently: refresh_concurrently, cascade: false)
     end
 
     def populated?
@@ -48,7 +58,8 @@ module SearchCraft::Model
       if Scenic.database.respond_to?(:populated?)
         Scenic.database.populated?(schemaless_table_name)
       else
-        raise "Upgrade Scenic beyond v1.7.0 to get populated? method"
+        warn "Upgrade Scenic beyond v1.7.0 to get populated? method"
+        true
       end
     end
 
