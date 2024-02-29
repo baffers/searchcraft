@@ -1,4 +1,5 @@
 require "scenic"
+require "ext/scenic/adapters/postgres"
 
 module SearchCraft::Model
   # Maintain a list of classes that include this module
@@ -30,9 +31,7 @@ module SearchCraft::Model
 
   def self.refresh_any_unpopulated!
     included_classes.each do |klass|
-      unless klass.respond_to?(:populated?) && klass.populated?
-        klass.refresh!
-      end
+      klass.refresh! unless klass.populated?
     end
   end
 
@@ -53,14 +52,7 @@ module SearchCraft::Model
     end
 
     def populated?
-      # NOTE: https://github.com/scenic-views/scenic/pull/406 will do this clean up for us
-      schemaless_table_name = table_name.split(".").last.presence || table_name
-      if Scenic.database.respond_to?(:populated?)
-        Scenic.database.populated?(schemaless_table_name)
-      else
-        warn "Upgrade Scenic beyond v1.7.0 to get populated? method"
-        true
-      end
+      Scenic.database.populated?(table_name)
     end
 
     def refresh_concurrently=(value)

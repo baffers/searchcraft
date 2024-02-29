@@ -12,8 +12,3 @@ group :development, :test do
 end
 
 gem "steep", "~> 1.5"
-
-# Need scenic HEAD to get populated? method
-# https://github.com/scenic-views/scenic/commit/104d888d26e52999fa0e6b90c06a5953de072e35
-# Waiting on a release after v1.7.0
-gem "scenic", github: "scenic-views/scenic"

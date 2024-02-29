@@ -42,16 +42,12 @@ describe SearchCraft::Builder do
 
     SearchCraft::Builder.rebuild_any_if_changed!
 
-    if Scenic.database.respond_to?(:populated?)
-      assert !Numberless.populated?
-    end
+    assert !Numberless.populated?
 
     # Refresh the materialized view
     Numberless.refresh!
 
-    if Scenic.database.respond_to?(:populated?)
-      assert Numberless.populated?
-    end
+    assert Numberless.populated?
     assert_equal [1, 2, 3, 4, 5], Numberless.pluck(:number)
   end
 end

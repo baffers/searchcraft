@@ -33,6 +33,10 @@ module Scenic
       def refresh_materialized_view: (String, ?concurrently: bool, ?cascade: bool) -> nil
       def populated?: (String) -> bool
       def quote_table_name: (String) -> String
+
+      # The following are due to temporary ext/scenic/adapters/postgres.rb
+      def raise_unless_materialized_views_supported: () -> nil
+      def execute: (String) -> ActiveRecord::Result
     end
   end
 
