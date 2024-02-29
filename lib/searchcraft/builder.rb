@@ -110,8 +110,8 @@ class SearchCraft::Builder
   def view_sql
     # remove trailing ; from view_sql
     inner_sql = view_select_sql.gsub(/;\s*$/, "")
-    # TODO: allow a builder to be configured to be created with `WITH NO DATA`
-    with_data = "WITH NO DATA" if self.class.with_no_data?
+
+    with_data = self.class.with_no_data? ? "WITH NO DATA" : "WITH DATA"
     "CREATE MATERIALIZED VIEW #{view_name} AS (#{inner_sql}) #{with_data};"
   end
 
