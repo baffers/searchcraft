@@ -22,7 +22,6 @@ module SearchCraft::Model
   # Runs .refresh! on all classes that include SearchCraft::Model
   def self.refresh_all!
     included_classes.each do |klass|
-      warn "Refreshing materialized view #{klass.table_name}..." unless Rails.env.test?
       if klass.is_a?(ClassMethods)
         klass.refresh!
       end
@@ -46,7 +45,7 @@ module SearchCraft::Model
   module ClassMethods
     def refresh!
       refresh_concurrently = @refresh_concurrently && populated?
-      puts "Refreshing materialized view #{table_name}..." if SearchCraft.debug?
+      warn "Refreshing materialized view #{table_name}..." unless Rails.env.test?
 
       Scenic.database.refresh_materialized_view(table_name, concurrently: refresh_concurrently, cascade: false)
     end

@@ -37,7 +37,7 @@ class SearchCraft::Builder
     end
 
     # Iterate through subclasses, and invoke recreate_view_if_changed!
-    def rebuild_any_if_changed!
+    def rebuild_any_if_changed!(skip_dump_schema: false)
       SearchCraft::ViewHashStore.setup_table_if_needed!
 
       sorted_builders = sort_builders_by_dependency
@@ -51,7 +51,10 @@ class SearchCraft::Builder
 
       builders_changed = []
       sorted_builders.each do |builder|
-        changed = builder.new.recreate_view_if_changed!(builders_changed: builders_changed)
+        changed = builder.new.recreate_view_if_changed!(
+          builders_changed: builders_changed,
+          skip_dump_schema: skip_dump_schema
+        )
         builders_changed << builder if changed
       end
 
@@ -128,7 +131,7 @@ class SearchCraft::Builder
 
   # If missing or changed, drop and create view
   # Returns false if no change required
-  def recreate_view_if_changed!(builders_changed: [])
+  def recreate_view_if_changed!(builders_changed: [], skip_dump_schema: false)
     if SearchCraft.debug?
       warn "#{self.class.name}#recreate_view_if_changed!"
       warn "  builders_changed: #{builders_changed.map(&:name).join(", ")}" if builders_changed.any?
@@ -153,7 +156,7 @@ class SearchCraft::Builder
     drop_view!
     create_view!
     update_hash_store!
-    dump_schema!
+    dump_schema! unless skip_dump_schema
 
     true
   end
@@ -176,6 +179,7 @@ class SearchCraft::Builder
     SearchCraft::ViewHashStore.reset!(builder: self)
   end
 
+  # TODO: what if indexes didn't change?
   def recreate_indexes!
     drop_indexes!
     create_indexes!
