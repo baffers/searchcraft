@@ -45,9 +45,19 @@ module SearchCraft::Model
   module ClassMethods
     def refresh!
       refresh_concurrently = @refresh_concurrently && populated?
-      warn "Refreshing materialized view #{table_name}..." unless Rails.env.test?
+      unless Rails.env.test?
+        if refresh_concurrently
+          warn "Refreshing materialized view concurrently #{table_name}..."
+        else
+          warn "Refreshing materialized view #{table_name}..."
+        end
+      end
 
       Scenic.database.refresh_materialized_view(table_name, concurrently: refresh_concurrently, cascade: false)
+    rescue ActiveRecord::StatementInvalid
+      # If populated? lies and returns true; then might get error:
+      # PG::FeatureNotSupported: ERROR:  CONCURRENTLY cannot be used when the materialized view is not populated (ActiveRecord::StatementInvalid)
+      Scenic.database.refresh_materialized_view(table_name, concurrently: false, cascade: false)
     end
 
     def populated?
