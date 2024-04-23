@@ -21,9 +21,15 @@ module SearchCraft::Model
 
   # Runs .refresh! on all classes that include SearchCraft::Model
   def self.refresh_all!
-    included_classes.each do |klass|
-      if klass.is_a?(ClassMethods)
-        klass.refresh!
+    if SearchCraft.config.explicit_model_class_names.present?
+      SearchCraft.config.explicit_model_class_names.each do |model_class_name|
+        model_class_name.constantize.refresh!
+      end
+    else
+      included_classes.each do |klass|
+        if klass.is_a?(ClassMethods)
+          klass.refresh!
+        end
       end
     end
   end
