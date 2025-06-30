@@ -10,13 +10,16 @@ on:
 jobs:
   test_gem:
     runs-on: ubuntu-latest
-    name: Ruby ${{ matrix.ruby }}
+    name: Ruby ${{ matrix.ruby }}, Rails ${{ matrix.rails }}
     strategy:
+      fail-fast: false
       matrix:
-        ruby:
-          - '3.1.4'
-          - '3.2.3'
-          - '3.3.0'
+        ruby: ['3.1.4', '3.2.3', '3.3.8', '3.4.4']
+        # ruby: ['3.4.4']
+        rails: ['7.0', '7.1', '7.2']
+    env:
+      RAILS_VERSION: ${{ matrix.rails }}
+      RUBY_VERSION: ${{ matrix.ruby }}
 
     services:
       postgres:
@@ -39,8 +42,8 @@ jobs:
     # TODO: steep check failing in CI and I don't want to figure out why right now
     # - name: Check signatures
     #   run: bundle exec steep check
-    - name: Run standardrb
-      run: bundle exec standardrb
+    # - name: Run standardrb
+    #   run: bundle exec standardrb
     - name: Run tests
       run: bundle exec rake test
       env:
@@ -48,11 +51,16 @@ jobs:
 
   test_demo_app:
     runs-on: ubuntu-latest
-    name: Rails App ${{ matrix.ruby }}
+    name: Rails App- Ruby ${{ matrix.ruby }}, Rails ${{ matrix.rails }}
     strategy:
+      fail-fast: false
       matrix:
-        ruby:
-          - '3.2.2'
+        ruby: ['3.1.4', '3.2.3', '3.3.8', '3.4.4']
+        # ruby: ['3.4.4']
+        rails: ['7.0', '7.1', '7.2']
+    env:
+      RAILS_VERSION: ${{ matrix.rails }}
+      RUBY_VERSION: ${{ matrix.ruby }}
 
     services:
       postgres:

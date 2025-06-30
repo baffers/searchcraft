@@ -35,10 +35,12 @@ Gem::Specification.new do |spec|
   spec.add_dependency "activerecord"
   spec.add_dependency "scenic", "~> 1.7"
 
+  spec.add_development_dependency "logger" # to fix issue in rails 7.0
   spec.add_development_dependency "activesupport"
   spec.add_development_dependency "rake", "~> 13.0"
   spec.add_development_dependency "minitest", "~> 5.0"
   spec.add_development_dependency "pg"
+  spec.add_development_dependency "bigdecimal" # failures in ruby 3.4.4 & Rails 7.0
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
