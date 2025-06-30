@@ -40,6 +40,7 @@ module SearchCraft
   end
 end
 
+require 'logger' # a workaround for https://github.com/rails/rails/issues/54263 in Rails 7.0
 require "active_record"
 
 require_relative "searchcraft/version"

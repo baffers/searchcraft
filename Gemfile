@@ -5,6 +5,14 @@ source "https://rubygems.org"
 # Specify your gem's dependencies in searchcraft.gemspec
 gemspec
 
+rails_version = ENV.fetch("RAILS_VERSION", "7.0")
+rails_constraint = if rails_version == "main"
+  {github: "rails/rails"}
+else
+  "~> #{rails_version}.0"
+end
+gem "rails", rails_constraint
+
 group :development, :test do
   gem "standard", "~> 1.3", require: false
   gem "erb_lint", require: false
