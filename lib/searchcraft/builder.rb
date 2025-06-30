@@ -87,8 +87,8 @@ class SearchCraft::Builder
 
       potential_superclass_names = known_subclass_names + ["SearchCraft::Builder"]
       potential_superclass_regex = Regexp.new(potential_superclass_names.join("|"))
-
-      Rails.configuration.eager_load_paths.each do |load_path|
+      eager_loaded_paths = Rails.configuration.try(:all_eager_load_paths) || Rails.configuration.eager_load_paths
+      eager_loaded_paths.each do |load_path|
         Dir.glob("#{load_path}/**/*.rb").each do |file|
           File.readlines(file).each do |line|
             if (match = line.match(/class\s+([\w:]+)\s*<\s*#{potential_superclass_regex}/))
